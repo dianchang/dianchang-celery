@@ -16,6 +16,10 @@ app.conf.update(
         'count': {
             'task': 'dc.tasks.count',
             'schedule': timedelta(minutes=2)
+        },
+        'calculate_user_topic_statistic': {
+            'task': 'dc.tasks.calculate_user_topic_statistic',
+            'schedule': timedelta(minutes=10)
         }
     }
 )
