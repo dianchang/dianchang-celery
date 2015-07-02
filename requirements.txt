@@ -1,0 +1,6 @@
+celery
+sqlalchemy
+redis
+flask
+flask-sqlalchemy
+pymysql
