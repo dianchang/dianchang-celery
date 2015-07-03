@@ -11,8 +11,10 @@ def deploy():
         with shell_env(MODE='PRODUCTION'):
             run('git reset --hard HEAD')
             run('git pull')
+            run('git pull --recurse-submodules')
             with prefix('source venv/bin/activate'):
                 run('pip install -r requirements.txt')
+                run('pip install -r models/requirements.txt')
             run('supervisorctl restart celerybeat')
             run('supervisorctl restart celery')
 

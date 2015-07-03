@@ -1,0 +1,3 @@
+[submodule "dc/models"]
+	path = dc/models
+	url = git@github.com:dianchang/dianchang-models.git
