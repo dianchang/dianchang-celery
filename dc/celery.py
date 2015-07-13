@@ -15,7 +15,7 @@ app.conf.update(
     CELERYBEAT_SCHEDULE={
         'count': {
             'task': 'dc.tasks.count',
-            'schedule': timedelta(minutes=2)
+            'schedule': timedelta(minutes=10)
         },
         'calculate_user_topic_statistic': {
             'task': 'dc.tasks.calculate_user_topic_statistic',
@@ -23,7 +23,7 @@ app.conf.update(
         },
         'relevant_topics': {
             'task': 'dc.tasks.relevant_topics',
-            'schedule': timedelta(minutes=1)
+            'schedule': timedelta(minutes=10)
         }
     }
 )
