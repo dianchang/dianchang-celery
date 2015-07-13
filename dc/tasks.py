@@ -1,3 +1,4 @@
+# coding: utf-8
 from __future__ import absolute_import
 from flask import Flask
 import json
@@ -32,6 +33,7 @@ init_models(flask_app)
 
 @app.task
 def count():
+    """统一各模型的count类字段"""
     from .models import db, Topic
 
     with flask_app.app_context():
@@ -44,6 +46,7 @@ def count():
 
 @app.task
 def calculate_user_topic_statistic():
+    """计算用户在话题下的统计数据"""
     from .models import db, UserTopicStatistic, Answer, Question, Topic, UpvoteAnswer
 
     with flask_app.app_context():
@@ -73,4 +76,30 @@ def calculate_user_topic_statistic():
                 topic_statistic.calculate_week_score()
                 db.session.add(topic_statistic)
 
+            db.session.commit()
+
+
+@app.task
+def relevant_topics():
+    """计算每个话题的相关话题"""
+    import operator
+    from dc.models import db, Topic, QuestionTopic, RelevantTopic
+
+    with flask_app.app_context():
+        for topic in Topic.query:
+            map(db.session.delete, topic.relevant_topics)
+
+            relevant_topics = {}
+            for question in topic.questions:
+                for _topic in question.question.topics.filter(QuestionTopic.topic_id != topic.id):
+                    if _topic.topic_id in relevant_topics:
+                        relevant_topics[_topic.topic_id] += 1
+                    else:
+                        relevant_topics[_topic.topic_id] = 0
+
+            relevant_topics = sorted(relevant_topics.items(), key=operator.itemgetter(1))
+            relevant_topics.reverse()
+            for relevant_topic_id, score in relevant_topics:
+                relevant_topic = RelevantTopic(topic_id=topic.id, relevant_topic_id=relevant_topic_id, score=score)
+                db.session.add(relevant_topic)
             db.session.commit()
