@@ -11,7 +11,8 @@ flask_app = Flask(__name__)
 flask_app.config.update(
     ROOT_TOPIC_ID=8,
     DEFAULT_PARENT_TOPIC_ID=26,
-    CDN_HOST="http://hustlzp.qiniudn.com"
+    CDN_HOST="http://hustlzp.qiniudn.com",
+    DC_DOMAIN="http://119.254.102.136"
 )
 
 mode = os.environ.get('MODE')
