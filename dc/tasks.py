@@ -92,6 +92,8 @@ def relevant_topics():
             relevant_topics = {}
             for question in topic.questions:
                 for _topic in question.question.topics.filter(QuestionTopic.topic_id != topic.id):
+                    if _topic.topic.merge_to_topic_id:
+                        continue
                     if _topic.topic_id in relevant_topics:
                         relevant_topics[_topic.topic_id] += 1
                     else:
