@@ -136,7 +136,7 @@ def calculate_fantastic_answers():
     """计算精彩回答"""
     with flask_app.app_context():
         for answer in Answer.query.filter(~Answer.anonymous, ~Answer.hide):
-            if answer.upvotes_count > 1:
+            if answer.upvotes_count >= 1:
                 answer.fantastic = True
                 db.session.add(answer)
         db.session.commit()
