@@ -32,6 +32,10 @@ app.conf.update(
         'calculate_hot_topics': {
             'task': 'dc.tasks.calculate_hot_topics',
             'schedule': crontab()
+        },
+        'calculate_fantastic_answers': {
+            'task': 'dc.tasks.calculate_fantastic_answers',
+            'schedule': timedelta(minutes=2)
         }
     }
 )

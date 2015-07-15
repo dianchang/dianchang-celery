@@ -5,9 +5,11 @@ from math import sqrt
 from datetime import datetime, timedelta
 import json
 import os
+import operator
 from dc.celery import app
 from datetime import date, timedelta
 from .models import init_models
+from .models import db, Topic, Question, Answer, UserTopicStatistic, UpvoteAnswer, RelevantTopic, QuestionTopic
 
 flask_app = Flask(__name__)
 flask_app.config.update(
@@ -37,8 +39,6 @@ init_models(flask_app)
 @app.task
 def count():
     """统一各模型的count类字段"""
-    from .models import db, Topic
-
     with flask_app.app_context():
         for topic in Topic.query:
             topic.all_questions_count = topic.all_questions.count()
@@ -50,8 +50,6 @@ def count():
 @app.task
 def calculate_user_topic_statistic():
     """计算用户在话题下的统计数据"""
-    from .models import db, UserTopicStatistic, Answer, Question, Topic, UpvoteAnswer
-
     with flask_app.app_context():
         for topic_statistic in UserTopicStatistic.query:
             topic_id = topic_statistic.topic_id
@@ -85,9 +83,6 @@ def calculate_user_topic_statistic():
 @app.task
 def relevant_topics():
     """计算每个话题的相关话题"""
-    import operator
-    from dc.models import db, Topic, QuestionTopic, RelevantTopic
-
     with flask_app.app_context():
         for topic in Topic.query:
             map(db.session.delete, topic.relevant_topics)
@@ -113,8 +108,6 @@ def relevant_topics():
 @app.task
 def calculate_hot_topics():
     """计算热议话题"""
-    from dc.models import db, Topic, Question, Answer
-
     with flask_app.app_context():
         for topic in Topic.query:
             # 过去一分钟内该话题下的新问题
@@ -135,6 +128,17 @@ def calculate_hot_topics():
             topic.sqrt_avg = faz.sqrt_avg
 
             db.session.add(topic)
+        db.session.commit()
+
+
+@app.task
+def calculate_fantastic_answers():
+    """计算精彩回答"""
+    with flask_app.app_context():
+        for answer in Answer.query.filter(~Answer.anonymous, ~Answer.hide):
+            if answer.upvotes_count > 1:
+                answer.fantastic = True
+                db.session.add(answer)
         db.session.commit()
 
 

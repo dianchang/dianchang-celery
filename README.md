@@ -16,6 +16,26 @@
 * 全站热门的待回答问题
 * 我关注的话题下的新人回答、刚出炉的回答
 
+## 开发
+
+启动 workers：
+
+```
+$ celery worker -A dc --loglevel=INFO
+```
+
+启动 beat：
+
+```
+$ celery beat -A dc --loglevel=INFO
+```
+
+启动 flowers：
+
+```
+$ celery flower -A dc --address=0.0.0.0 --port=5555
+```
+
 ## 部署
 
 ```
