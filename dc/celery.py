@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 from datetime import timedelta
-
 from celery import Celery
+from celery.schedules import crontab
 
 app = Celery('dc',
              broker='redis://localhost:6379/0',
@@ -24,6 +24,10 @@ app.conf.update(
         'relevant_topics': {
             'task': 'dc.tasks.relevant_topics',
             'schedule': timedelta(minutes=10)
+        },
+        'calculate_hot_topics': {
+            'task': 'dc.tasks.calculate_hot_topics',
+            'schedule': crontab()
         }
     }
 )

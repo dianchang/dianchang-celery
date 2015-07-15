@@ -1,6 +1,8 @@
 # coding: utf-8
 from __future__ import absolute_import
 from flask import Flask
+from math import sqrt
+from datetime import datetime, timedelta
 import json
 import os
 from dc.celery import app
@@ -106,3 +108,66 @@ def relevant_topics():
                 relevant_topic = RelevantTopic(topic_id=topic.id, relevant_topic_id=relevant_topic_id, score=score)
                 db.session.add(relevant_topic)
             db.session.commit()
+
+
+@app.task
+def calculate_hot_topics():
+    """计算热议话题"""
+    from dc.models import db, Topic, Question, Answer
+
+    with flask_app.app_context():
+        for topic in Topic.query:
+            # 过去一分钟内该话题下的新问题
+            new_questions_count = topic.all_questions.filter(
+                Question.created_at >= (datetime.now() - timedelta(minutes=1))).count()
+
+            # 过去一分钟内该话题下的新回答
+            new_answers_count = topic.all_answers.filter(
+                Answer.created_at >= (datetime.now() - timedelta(minutes=1))).count()
+
+            current_value = new_questions_count + new_answers_count
+
+            faz = FazScore(0.8, topic.avg, topic.sqrt_avg)
+            topic.hot_score = faz.score(current_value)
+
+            faz.update(current_value)
+            topic.avg = faz.avg
+            topic.sqrt_avg = faz.sqrt_avg
+
+            db.session.add(topic)
+        db.session.commit()
+
+
+class FazScore(object):
+    """
+    计算标准分数，见：
+
+    http://stackoverflow.com/questions/787496/what-is-the-best-way-to-compute-trending-topics-or-tags
+    """
+
+    def __init__(self, decay, avg, sqrt_avg):
+        self.decay = decay
+        self.avg = avg
+        self.sqrt_avg = sqrt_avg
+
+    def update(self, value):
+        # Set initial averages to the first value in the sequence.
+        if self.avg == 0 and self.sqrt_avg == 0:
+            self.avg = float(value)
+            self.sqrt_avg = float((value ** 2))
+        # Calculate the average of the rest of the values using a
+        # floating average.
+        else:
+            self.avg = self.avg * self.decay + value * (1 - self.decay)
+            self.sqrt_avg = self.sqrt_avg * self.decay + (value ** 2) * (1 - self.decay)
+        return self
+
+    def std(self):
+        # Somewhat ad-hoc standard deviation calculation.
+        return sqrt(self.sqrt_avg - self.avg ** 2)
+
+    def score(self, obs):
+        if self.std() == 0:
+            return obs - self.avg
+        else:
+            return (obs - self.avg) / self.std()
