@@ -118,11 +118,11 @@ def calculate_hot_topics():
     with flask_app.app_context():
         for topic in Topic.query:
             # 过去一分钟内该话题下的新问题
-            new_questions_count = topic.all_questions.filter(
+            new_questions_count = topic.questions.filter(
                 Question.created_at >= (datetime.now() - timedelta(minutes=1))).count()
 
             # 过去一分钟内该话题下的新回答
-            new_answers_count = topic.all_answers.filter(
+            new_answers_count = topic.answers.filter(
                 Answer.created_at >= (datetime.now() - timedelta(minutes=1))).count()
 
             current_value = new_questions_count + new_answers_count
