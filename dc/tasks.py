@@ -13,8 +13,14 @@ from .models import db, Topic, Question, Answer, UserTopicStatistic, UpvoteAnswe
 
 flask_app = Flask(__name__)
 flask_app.config.update(
-    ROOT_TOPIC_ID=8,
-    DEFAULT_PARENT_TOPIC_ID=26,
+    ROOT_TOPIC_ID=2,
+    PRODUCT_TOPIC_ID=4,
+    ORGANIZATION_TOPIC_ID=3,
+    POSITION_TOPIC_ID=10,
+    SKILL_TOPIC_ID=11,
+    PEOPLE_TOPIC_ID=15,
+    OTHER_TOPIC_ID=56,
+    NC_TOPIC_ID=1,
     CDN_HOST="http://hustlzp.qiniudn.com",
     DC_DOMAIN="http://119.254.102.136"
 )
