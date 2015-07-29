@@ -14,22 +14,22 @@ from .models import db, Topic, Question, Answer, UserTopicStatistic, UpvoteAnswe
 flask_app = Flask(__name__)
 flask_app.config.update(
     ROOT_TOPIC_ID=2,
-    PRODUCT_TOPIC_ID=4,
-    ORGANIZATION_TOPIC_ID=3,
-    POSITION_TOPIC_ID=10,
-    SKILL_TOPIC_ID=11,
-    PEOPLE_TOPIC_ID=15,
-    OTHER_TOPIC_ID=56,
-    NC_TOPIC_ID=1,
+    PRODUCT_TOPIC_ID=3,
+    ORGANIZATION_TOPIC_ID=4,
+    POSITION_TOPIC_ID=5,
+    SKILL_TOPIC_ID=6,
+    PEOPLE_TOPIC_ID=7,
+    OTHER_TOPIC_ID=8,
+    NC_TOPIC_ID=9,
     CDN_HOST="http://hustlzp.qiniudn.com",
-    DC_DOMAIN="http://119.254.102.136"
+    DC_DOMAIN="http://www.dianchang.me"
 )
 
 mode = os.environ.get('MODE')
 if mode == 'PRODUCTION':
     flask_app.config.update(
         SQLALCHEMY_BINDS={
-            'dc': "mysql+pymysql://root:sBLkMvu1PlRuZEAEerqa@10.80.183.93:3306/dianchang"
+            'dc': "mysql+pymysql://root:dianchangkeji2015zi@209.9.106.250:3306/dianchang"
         }
     )
 else:
