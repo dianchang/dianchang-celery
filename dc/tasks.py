@@ -29,7 +29,7 @@ mode = os.environ.get('MODE')
 if mode == 'PRODUCTION':
     flask_app.config.update(
         SQLALCHEMY_BINDS={
-            'dc': "mysql+pymysql://root:dianchangkeji2015zi@209.9.106.250:3306/dianchang"
+            'dc': "mysql+pymysql://root:dianchang2015kejizi@209.9.106.250:3306/dianchang"
         }
     )
 else:
