@@ -16,3 +16,4 @@ class DevelopmentConfig(Config):
     SQLALCHEMY_BINDS = {
         'dc': "mysql+pymysql://root:password@localhost/dianchang"
     }
+    SENTRY_DNS = ""

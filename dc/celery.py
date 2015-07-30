@@ -43,8 +43,8 @@ app.conf.update(
 
 # 注册 Sentry
 config = load_config()
-if config.SENTRY_DSN:
-    client = Client(dsn=config.SENTRY_DSN)
+if config.SENTRY_DNS:
+    client = Client(dsn=config.SENTRY_DNS)
     register_logger_signal(client)
     register_signal(client)
     register_logger_signal(client, loglevel=logging.INFO)
