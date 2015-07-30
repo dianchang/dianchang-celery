@@ -10,35 +10,11 @@ from dc.celery import app
 from datetime import date, timedelta
 from .models import init_models
 from .models import db, Topic, Question, Answer, UserTopicStatistic, UpvoteAnswer, RelevantTopic, QuestionTopic
+from config import load_config
 
+config = load_config()
 flask_app = Flask(__name__)
-flask_app.config.update(
-    ROOT_TOPIC_ID=2,
-    PRODUCT_TOPIC_ID=3,
-    ORGANIZATION_TOPIC_ID=4,
-    POSITION_TOPIC_ID=5,
-    SKILL_TOPIC_ID=6,
-    PEOPLE_TOPIC_ID=7,
-    OTHER_TOPIC_ID=8,
-    NC_TOPIC_ID=9,
-    CDN_HOST="http://hustlzp.qiniudn.com",
-    DC_DOMAIN="http://www.dianchang.me"
-)
-
-mode = os.environ.get('MODE')
-if mode == 'PRODUCTION':
-    flask_app.config.update(
-        SQLALCHEMY_BINDS={
-            'dc': "mysql+pymysql://root:dianchang2015kejizi@209.9.106.250:3306/dianchang"
-        }
-    )
-else:
-    flask_app.config.update(
-        SQLALCHEMY_BINDS={
-            'dc': "mysql+pymysql://root:@localhost/dianchang"
-        }
-    )
-
+flask_app.config.from_object(config)
 init_models(flask_app)
 
 

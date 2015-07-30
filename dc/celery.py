@@ -6,6 +6,7 @@ from celery import Celery
 from celery.schedules import crontab
 from raven import Client
 from raven.contrib.celery import register_signal, register_logger_signal
+from config import load_config
 
 app = Celery('dc',
              broker='redis://localhost:6379/0',
@@ -41,10 +42,13 @@ app.conf.update(
 )
 
 # 注册 Sentry
-client = Client(dsn="http://98ab6589bb944ca381a69d32e5e5e5d2:c4edeac245204b81bf843ef145dc04f3@119.254.101.73:9000/4")
-register_logger_signal(client)
-register_signal(client)
-register_logger_signal(client, loglevel=logging.INFO)
+config = load_config()
+SENTRY_DSN = config.get('SENTRY_DSN')
+if SENTRY_DSN:
+    client = Client(dsn=SENTRY_DSN)
+    register_logger_signal(client)
+    register_signal(client)
+    register_logger_signal(client, loglevel=logging.INFO)
 
 if __name__ == '__main__':
     app.start()

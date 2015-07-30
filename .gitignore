@@ -2,3 +2,5 @@ venv/
 .idea/
 celerybeat*.*
 *.pyc
+config/development.py
+config/production.py
